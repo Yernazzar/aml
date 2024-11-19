@@ -1,4 +1,3 @@
-altair.vegalite.v4
 altair==5.4.1
 Pillow>=8.0.0
 streamlit==1.19.0

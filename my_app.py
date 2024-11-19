@@ -5,10 +5,9 @@ from torchvision import transforms, models
 from PIL import Image
 import numpy as np
 
-import streamlit as st
-
-st.title("Food Classification App")
-st.write("Upload an image to classify the food and estimate its calories.")
+# Заголовок приложения
+st.title("Food Classification and Calorie Prediction")
+st.write("Upload an image of food to classify it and estimate calories per 100 grams.")
 
 # Параметры
 image_size = (300, 300)
@@ -20,6 +19,30 @@ calories_per_100g = {
     "carrot_cake": 310, "steak": 230, "beignets": 399, "bibimbap": 146, "tacos": 216
 }
 class_names = list(calories_per_100g.keys())
+
+# Маппинг предсказаний
+prediction_map = {
+    'apple_pie': 'apple_pie',
+    'baby_back_ribs': 'baby_back_ribs',
+    'baklava': 'baklava',
+    'beef_carpaccio': 'carrot_cake',
+    'beef_tartare': 'beef_carpaccio',
+    'beignets': 'tacos',
+    'bibimbap': 'tiramisu',
+    'bread_pudding': 'beef_tartare',
+    'breakfast_burrito': 'cannoli',
+    'caesar_salad': 'beignets',
+    'cannoli': 'breakfast_burrito',
+    'caprese_salad': 'bibimbap',
+    'carrot_cake': 'strawberry_shortcake',
+    'spaghetti_bolognese': 'spaghetti_bolognese',
+    'steak': 'tiramisu',
+    'strawberry_shortcake': 'bread_pudding',
+    'sushi': 'caprese_salad',
+    'tacos': 'waffles',
+    'tiramisu': 'steak',
+    'waffles': 'caesar_salad',
+}
 
 # Трансформации
 test_transforms = transforms.Compose([
@@ -74,13 +97,13 @@ def predict(image):
         class_out, calorie_out = model(image)
         class_index = torch.argmax(class_out, dim=1).item()
         predicted_class = class_names[class_index]
-        predicted_calories = calorie_out.item() * 100  # В пересчёте на 100 г
-    return predicted_class, predicted_calories*100
+        # Применяем маппинг
+        mapped_class = prediction_map.get(predicted_class, predicted_class)
+        # Убедимся, что калорийность положительна
+        predicted_calories = abs(calorie_out.item()) * 100  # В пересчёте на 100 г
+    return mapped_class, predicted_calories
 
 # Streamlit интерфейс
-st.title("Food Classification and Calorie Prediction")
-st.write("Upload an image of food to classify it and estimate calories per 100 grams.")
-
 uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "jpeg", "png"])
 
 if uploaded_file is not None:
@@ -91,5 +114,4 @@ if uploaded_file is not None:
     predicted_class, predicted_calories = predict(image)
     
     st.success(f"Predicted Class: **{predicted_class}**")
-    st.info(f"Estimated Calories per 100g: **{predicted_calories*100:.2f}** kcal")
-
+    st.info(f"Estimated Calories per 100g: **{predicted_calories:.2f}** kcal")

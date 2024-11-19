@@ -100,7 +100,7 @@ def predict(image):
         # Применяем маппинг
         mapped_class = prediction_map.get(predicted_class, predicted_class)
         # Убедимся, что калорийность положительна
-        predicted_calories = abs(calorie_out.item()) * 100  # В пересчёте на 100 г
+        predicted_calories = abs(calorie_out.item()) * 10000  # В пересчёте на 100 г
     return mapped_class, predicted_calories
 
 # Streamlit интерфейс

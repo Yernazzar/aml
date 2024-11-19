@@ -114,4 +114,4 @@ if uploaded_file is not None:
     predicted_class, predicted_calories = predict(image)
     
     st.success(f"Predicted Class: **{predicted_class}**")
-    st.info(f"Estimated Calories per 100g: **{predicted_calories:.2f}** kcal")
+    st.info(f"Estimated Calories per 100g: **{predicted_calories*100:.2f}** kcal")
